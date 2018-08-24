@@ -6073,14 +6073,24 @@ Bravey.ApiAiAdapter = function(packagePath, extensions) {
     for (var e = 0; e < entities.length; e++) {
       var data = JSON.parse(loadedData[entities[e].file]);
       var newEntity = new Bravey.StringEntityRecognizer(entities[e].name);
-      for (var i = 0; i < data.entries.length; i++)
-        for (var j = 0; j < data.entries[i].synonyms.length; j++)
-          newEntity.addMatch(data.entries[i].value, data.entries[i].synonyms[j]);
+      for (var i = 0; i < data.entries.length; i++) {
+        for (var j = 0; j < data.entries[i].synonyms.length; j++) {
+          try {
+            newEntity.addMatch(data.entries[i].value, data.entries[i].synonyms[j]);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
       nlp.addEntity(newEntity);
     }
 
     for (var e = 0; e < intents.length; e++) {
       var data = JSON.parse(loadedData[intents[e].file]);
+      if (!data.userSays) {
+        console.error("No user says for ", data);
+        continue;
+      }
       for (var i = 0; i < data.userSays.length; i++) {
         var text = "",
           skip = false;

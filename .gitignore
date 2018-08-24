@@ -53,3 +53,5 @@ jspm_packages
 *.tgz
 
 .DS_Store
+
+\.idea/
